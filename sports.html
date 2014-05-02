@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ESPN Sports Headlines</title>
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css" />
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+		<script>
+			var xmlhttp;
+
+			window.onload = function()
+			{
+				document.getElementById('btnGetHeadlines').addEventListener('click', getHeadlines, false);
+			}
+
+			function getHeadlines()
+			{
+				var url = "http://api.espn.com/v1/sports/baseball/mlb/news/headlines/top/?teams=Yankees&_accept=text%2Fxml&apikey=fg89742m2bumjg4szp48443d";
+				xmlhttp = new XMLHttpRequest();
+				xmlhttp.open("GET", url, true);
+				xmlhttp.onreadystatechange = processHeadlines;
+				xmlhttp.send();
+			}
+
+			function processHeadlines()
+			{
+				if(xmlhttp.readyState ==4 && xmlhttp.status ==200)
+				{
+					var output = "";
+					var theXML = xmlhttp.responseXML.documentElement;
+					var headlines = theXML.getElementsByTagName('headlines')[0];
+					//headlines.getElementsByTagName('headlinesItem')[0].getElementsByTagName('headline')[0].firstChild.nodeValue
+					var items = headlines.getElementsByTagName('headlinesItem');
+					for(var i=0; i < items.length; i++)
+					{
+						var url = items[i].getElementsByTagName('links')[0].getElementsByTagName('mobile')[0].getElementsByTagName('href')[0].firstChild.nodeValue;
+						output += "<a href='" + url + "'><button>" + items[i].getElementsByTagName('headline')[0].firstChild.nodeValue + "</button></a>";
+					}
+					output += "</ul>"
+					document.getElementById('result').innerHTML = output;
+				}
+			}
+
+
+
+
+		</script>
+		<style>
+			#container
+			{
+				margin: 5px;
+			}
+			button
+			{
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<button id="btnGetHeadlines">Get Headlines</button>
+			<div id="result"></div>
+		</div>
+	</body>
+</html>
